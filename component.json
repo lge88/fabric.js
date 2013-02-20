@@ -1,0 +1,14 @@
+{
+  "name": "fabric",
+  "description": "Object model for HTML5 canvas, and SVG-to-canvas parser. Backed by jsdom and node-canvas.",
+  "version": "1.0.11",
+  "author": "Juriy Zaytsev <kangax@gmail.com>",
+  "keywords": ["canvas", "graphic", "graphics", "SVG", "node-canvas", "parser", "HTML5", "object model"],
+  "licenses": [{
+    "type": "MIT",
+    "url": "http://github.com/kangax/fabric.js/raw/master/LICENSE"
+  }],
+  "scripts": [
+    ./dist/all.js
+  ]
+}
