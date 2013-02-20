@@ -9,6 +9,6 @@
     "url": "http://github.com/kangax/fabric.js/raw/master/LICENSE"
   }],
   "scripts": [
-    ./dist/all.js
+    "./dist/all.js"
   ]
 }
