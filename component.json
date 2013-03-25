@@ -1,5 +1,5 @@
 {
-  "name": "fabric",
+  "name": "fabric.js",
   "description": "Object model for HTML5 canvas, and SVG-to-canvas parser. Backed by jsdom and node-canvas.",
   "version": "1.0.11",
   "author": "Juriy Zaytsev <kangax@gmail.com>",
@@ -8,6 +8,8 @@
     "type": "MIT",
     "url": "http://github.com/kangax/fabric.js/raw/master/LICENSE"
   }],
+  "repo": "lge88/fabric.js",
+  "upstream": "git://github.com/kangax/fabric.js.git",
   "scripts": [
     "./dist/all.js"
   ]
