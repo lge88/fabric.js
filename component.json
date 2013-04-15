@@ -1,5 +1,5 @@
 {
-  "name": "fabric.js",
+  "name": "fabric",
   "repo": "lge88/fabric.js",
   "upstream": "git://github.com/kangax/fabric.js.git",
   "scripts": [
