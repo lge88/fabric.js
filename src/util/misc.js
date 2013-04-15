@@ -4,7 +4,7 @@
       atan2 = Math.atan2;
 
   /**
-   * @namespace
+   * @namespace Various utilities
    */
   fabric.util = { };
 
@@ -386,6 +386,16 @@
     }
   }
 
+  /**
+   * @method clipContext
+   */
+  function clipContext(receiver, ctx) {
+    ctx.save();
+    ctx.beginPath();
+    receiver.clipTo(ctx);
+    ctx.clip();
+  }
+
   fabric.util.removeFromArray = removeFromArray;
   fabric.util.degreesToRadians = degreesToRadians;
   fabric.util.radiansToDegrees = radiansToDegrees;
@@ -402,5 +412,6 @@
   fabric.util.drawDashedLine = drawDashedLine;
   fabric.util.createCanvasElement = createCanvasElement;
   fabric.util.createAccessors = createAccessors;
+  fabric.util.clipContext = clipContext;
 
 })();

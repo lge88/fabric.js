@@ -30,6 +30,10 @@
       this._onMouseUp = this._onMouseUp.bind(this);
       this._onResize = this._onResize.bind(this);
 
+      this._onGesture = function(e, s) {
+        _this.__onTransformGesture(e, s);
+      };
+
       addListener(fabric.window, 'resize', this._onResize);
 
       if (fabric.isTouchSupported) {
@@ -37,9 +41,7 @@
         addListener(this.upperCanvasEl, 'touchmove', this._onMouseMove);
 
         if (typeof Event !== 'undefined' && 'add' in Event) {
-          Event.add(this.upperCanvasEl, 'gesture', function(e, s) {
-            _this.__onTransformGesture(e, s);
-          });
+          Event.add(this.upperCanvasEl, 'gesture', this._onGesture);
         }
       }
       else {
@@ -112,7 +114,8 @@
       var target;
 
       if (this.isDrawingMode && this._isCurrentlyDrawing) {
-        this.freeDrawing._finalizeAndAddPath();
+        this._isCurrentlyDrawing = false;
+        this.freeDrawingBrush.onMouseUp();
         this.fire('mouse:up', { e: e });
         return;
       }
@@ -196,12 +199,9 @@
 
       if (this.isDrawingMode) {
         pointer = this.getPointer(e);
-        this.freeDrawing._prepareForDrawing(pointer);
-
-        // capture coordinates immediately;
-        // this allows to draw dots (when movement never occurs)
-        this.freeDrawing._captureDrawingPath(pointer);
-
+        this._isCurrentlyDrawing = true;
+        this.discardActiveObject().renderAll();
+        this.freeDrawingBrush.onMouseDown(pointer);
         this.fire('mouse:down', { e: e });
         return;
       }
@@ -220,6 +220,7 @@
           left: 0
         };
         this.deactivateAllWithDispatch();
+        target && this.setActiveObject(target, e);
       }
       else {
         // determine if it's a drag or rotate case
@@ -236,8 +237,8 @@
         else {
           if (target !== this.getActiveGroup()) {
             this.deactivateAll();
+            this.setActiveObject(target, e);
           }
-          this.setActiveObject(target, e);
         }
 
         this._setupCurrentTransform(e, target);
@@ -274,12 +275,7 @@
       if (this.isDrawingMode) {
         if (this._isCurrentlyDrawing) {
           pointer = this.getPointer(e);
-          this.freeDrawing._captureDrawingPath(pointer);
-
-          // redraw curve
-          // clear top canvas
-          this.clearContext(this.contextTop);
-          this.freeDrawing._render(this.contextTop);
+          this.freeDrawingBrush.onMouseMove(pointer);
         }
         this.upperCanvasEl.style.cursor = this.freeDrawingCursor;
         this.fire('mouse:move', { e: e });
@@ -311,7 +307,7 @@
           // image/text was hovered-out from, we remove its borders
           for (var i = this._objects.length; i--; ) {
             if (this._objects[i] && !this._objects[i].active) {
-              this._objects[i].setActive(false);
+              this._objects[i].set('active', false);
             }
           }
           style.cursor = this.defaultCursor;
@@ -359,25 +355,6 @@
           // rotate object only if shift key is not pressed
           // and if it is not a group we are transforming
 
-          // TODO
-          /*if (!e.shiftKey) {
-            this._rotateObject(x, y);
-
-            this.fire('object:rotating', {
-              target: this._currentTransform.target,
-              e: e
-            });
-            this._currentTransform.target.fire('rotating');
-          }*/
-
-          // if (!this._currentTransform.target.hasRotatingPoint) {
-          //   this._scaleObject(x, y);
-          //   this.fire('object:scaling', {
-          //     target: this._currentTransform.target
-          //   });
-          //   this._currentTransform.target.fire('scaling');
-          // }
-
           if (e.shiftKey || this.uniScaleTransform) {
             this._currentTransform.currentAction = 'scale';
             this._scaleObject(x, y);
@@ -396,14 +373,8 @@
             target: this._currentTransform.target,
             e: e
           });
+          this._currentTransform.target.fire('scaling', { e: e });
         }
-        // else if (this._currentTransform.action === 'scale') {
-        //   this._scaleObject(x, y);
-        //   this.fire('object:scaling', {
-        //     target: this._currentTransform.target
-        //   });
-        //   this._currentTransform.target.fire('scaling');
-        // }
         else if (this._currentTransform.action === 'scaleX') {
           this._scaleObject(x, y, 'x');
 
@@ -429,12 +400,10 @@
             target: this._currentTransform.target,
             e: e
           });
-
-          this._setCursor(this.moveCursor);
-
           this._currentTransform.target.fire('moving', { e: e });
+          this._setCursor(this.moveCursor);
         }
-        // only commit here. when we are actually moving the pictures
+
         this.renderAll();
       }
       this.fire('mouse:move', { target: target, e: e });

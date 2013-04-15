@@ -332,7 +332,7 @@
      * @chainable
      */
     drawBorders: function(ctx) {
-      if (!this.hasBorders) return;
+      if (!this.hasBorders) return this;
 
       var padding = this.padding,
           padding2 = padding * 2,
@@ -383,13 +383,13 @@
      * Draws corners of an object's bounding box.
      * Requires public properties: width, height, scaleX, scaleY
      * Requires public options: cornerSize, padding
-     * @method drawCorners
+     * @method drawControls
      * @param {CanvasRenderingContext2D} ctx Context to draw on
      * @return {fabric.Object} thisArg
      * @chainable
      */
-    drawCorners: function(ctx) {
-      if (!this.hasControls) return;
+    drawControls: function(ctx) {
+      if (!this.hasControls) return this;
 
       var size = this.cornerSize,
           size2 = size / 2,

@@ -92,6 +92,7 @@ var filesToInclude = [
 
   'src/log.js',
   'src/observable.mixin.js',
+  'src/collection.mixin.js',
 
   'src/util/misc.js',
   'src/util/lang_array.js',
@@ -117,7 +118,12 @@ var filesToInclude = [
 
   'src/static_canvas.class.js',
 
-  ifSpecifiedInclude('freedrawing', 'src/freedrawing.class.js'),
+  ifSpecifiedInclude('freedrawing', 'src/base_brush.class.js'),
+
+  ifSpecifiedInclude('freedrawing', 'src/pencil_brush.class.js'),
+  ifSpecifiedInclude('freedrawing', 'src/circle_brush.class.js'),
+  ifSpecifiedInclude('freedrawing', 'src/spray_brush.class.js'),
+  ifSpecifiedInclude('freedrawing', 'src/pattern_brush.class.js'),
 
   ifSpecifiedInclude('interaction', 'src/canvas.class.js'),
   ifSpecifiedInclude('interaction', 'src/canvas_events.mixin.js'),

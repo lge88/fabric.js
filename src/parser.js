@@ -356,7 +356,7 @@
                 instances.splice(index, 0, obj);
                 checkIfDone();
               };
-            })(index), options);
+            })(index, el), options);
           }
           else {
             var obj = klass.fromElement(el, options);
@@ -582,7 +582,7 @@
    };
 
    /**
-    * Takes url corresponding to an SVG document, and parses it into a set of fabric objects
+    * Takes url corresponding to an SVG document, and parses it into a set of fabric objects. Note that SVG is fetched via XMLHttpRequest, so it needs to conform to SOP (Same Origin Policy)
     * @method loadSVGFromURL
     * @memberof fabric
     * @param {String} url

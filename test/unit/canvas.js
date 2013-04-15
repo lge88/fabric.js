@@ -23,13 +23,13 @@
 
   var PATH_DATALESS_JSON = '{"objects":[{"type":"path","originX":"center","originY":"center","left":200,"top":200,"width":200,"height":200,"fill":"rgb(0,0,0)",'+
                            '"overlayFill":null,"stroke":null,"strokeWidth":1,"strokeDashArray":null,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,'+
-                           '"flipY":false,"opacity":1,"selectable":true,"hasControls":true,"hasBorders":true,"hasRotatingPoint":true,"transparentCorners":true,"perPixelTargetFind":false,"shadow":null,'+
-                           '"path":"http://example.com/"}],"background":""}';
+                           '"flipY":false,"opacity":1,"selectable":true,"hasControls":true,"hasBorders":true,"hasRotatingPoint":true,"transparentCorners":true,'+
+                           '"perPixelTargetFind":false,"shadow":null,"visible":true,"path":"http://example.com/"}],"background":""}';
 
   var RECT_JSON = '{"objects":[{"type":"rect","originX":"center","originY":"center","left":0,"top":0,"width":10,"height":10,"fill":"rgb(0,0,0)","overlayFill":null,'+
                   '"stroke":null,"strokeWidth":1,"strokeDashArray":null,"scaleX":1,"scaleY":1,"angle":0,"flipX":false,"flipY":false,"opacity":1,'+
-                  '"selectable":true,"hasControls":true,"hasBorders":true,"hasRotatingPoint":true,"transparentCorners":true,"perPixelTargetFind":false,"shadow":null,"rx":0,"ry":0}],'+
-                  '"background":"#ff5555"}';
+                  '"selectable":true,"hasControls":true,"hasBorders":true,"hasRotatingPoint":true,"transparentCorners":true,"perPixelTargetFind":false,"shadow":null,'+
+                  '"visible":true,"rx":0,"ry":0}],"background":"#ff5555"}';
 
   var el = fabric.document.createElement('canvas');
   el.width = 600; el.height = 600;
@@ -149,7 +149,7 @@
       alert("toDataURL is not supported by this environment. Some of the tests can not be run.");
     }
     else {
-      var dataURL = canvas.toDataURL('png');
+      var dataURL = canvas.toDataURL();
       // don't compare actual data url, as it is often browser-dependent
       // this.assertIdentical(emptyImageCanvasData, canvas.toDataURL('png'));
       equal(typeof dataURL, 'string');
@@ -499,10 +499,10 @@
     canvas.add(rect1, rect2);
 
     canvas.setActiveObject(rect1);
-    ok(rect1.isActive());
+    ok(rect1.active);
 
     canvas.setActiveObject(rect2);
-    ok(rect2.isActive());
+    ok(rect2.active);
   });
 
   test('getActiveObject', function() {
@@ -566,7 +566,7 @@
     canvas.setActiveObject(canvas.item(0));
 
     canvas.deactivateAll();
-    ok(!canvas.item(0).isActive());
+    ok(!canvas.item(0).active);
     equal(canvas.getActiveObject(), null);
     equal(canvas.getActiveGroup(), null);
   });
@@ -595,7 +595,7 @@
     });
 
     canvas.deactivateAllWithDispatch();
-    ok(!canvas.item(0).isActive());
+    ok(!canvas.item(0).active);
     equal(canvas.getActiveObject(), null);
     equal(canvas.getActiveGroup(), null);
 
@@ -708,14 +708,14 @@
 
     equal(canvas.getWidth(), 600);
     equal(canvas.setWidth(444), canvas, 'chainable');
-    equal(canvas.getWidth(), fabric.isLikelyNode ? undefined : 444);
+    equal(canvas.getWidth(), 444);
   });
 
   test('getSetHeight', function() {
     ok(typeof canvas.getHeight == 'function');
     equal(canvas.getHeight(), 600);
     equal(canvas.setHeight(765), canvas, 'chainable');
-    equal(canvas.getHeight(), fabric.isLikelyNode ? undefined : 765);
+    equal(canvas.getHeight(), 765);
   });
 
   test('containsPoint', function() {
@@ -904,6 +904,23 @@
 
       start();
     });
+  });
+
+  test('clipTo', function() {
+    canvas.clipTo = function(ctx) {
+      ctx.arc(0, 0, 10, 0, Math.PI * 2, false);
+    };
+
+    var error;
+    try {
+      canvas.renderAll();
+    }
+    catch(err) {
+      error = err;
+    }
+    delete canvas.clipTo;
+
+    ok(typeof error == 'undefined', 'renderAll with clipTo does not throw');
   });
 
 })();
